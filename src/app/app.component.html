@@ -1,0 +1,54 @@
+<div class="app-layout">
+  <mat-toolbar color="primary" class="main-toolbar">
+    <div class="brand">
+      <mat-icon class="brand-icon">account_balance_wallet</mat-icon>
+      <span class="app-title">Investments Allocator</span>
+    </div>
+
+    <nav class="nav-links">
+      <a mat-button routerLink="/inflow" routerLinkActive="active-nav">
+        <mat-icon>trending_up</mat-icon>
+        <span>Aporte Mensal</span>
+      </a>
+      <a mat-button routerLink="/portfolio" routerLinkActive="active-nav">
+        <mat-icon>pie_chart</mat-icon>
+        <span>Carteira &amp; Manutenção</span>
+      </a>
+    </nav>
+
+    <div class="spacer"></div>
+
+    @if (store.summary(); as summary) {
+      <div class="net-worth-badge" title="Patrimônio Total consolidado">
+        <span class="badge-label">Patrimônio:</span>
+        <span class="badge-value">{{ summary.total_minor_units | brlCurrency }}</span>
+      </div>
+    }
+  </mat-toolbar>
+
+  @if (store.loading()) {
+    <mat-progress-bar mode="indeterminate" class="global-loader"></mat-progress-bar>
+  }
+
+  @if (store.error(); as err) {
+    <div class="error-banner" role="alert">
+      <div class="error-content">
+        <mat-icon color="warn">error_outline</mat-icon>
+        <span class="error-message">{{ err }}</span>
+      </div>
+      <div class="error-actions">
+        <button mat-flat-button color="warn" (click)="retry()">
+          <mat-icon>refresh</mat-icon>
+          Tentar novamente
+        </button>
+        <button mat-icon-button (click)="store.clearError()" aria-label="Fechar alerta">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+  }
+
+  <main class="content-container">
+    <router-outlet></router-outlet>
+  </main>
+</div>

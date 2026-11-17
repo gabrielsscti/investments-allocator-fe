@@ -1,0 +1,30 @@
+<h2 mat-dialog-title>Configurar Quarentena — {{ data.ticker }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="dialog-form" (ngSubmit)="onSubmit()">
+    <p class="asset-subtitle">{{ data.name }}</p>
+
+    <div class="toggle-container">
+      <mat-slide-toggle formControlName="quarantined" color="warn">
+        Ativo em Quarentena (Bloqueia novos aportes)
+      </mat-slide-toggle>
+    </div>
+
+    <mat-form-field appearance="outline" class="note-field">
+      <mat-label>Motivo da Quarentena / Nota de Auditoria</mat-label>
+      <textarea
+        matInput
+        formControlName="note"
+        rows="4"
+        placeholder="Ex: Governança sob investigação, perda de fundamentos operacionais..."
+      ></textarea>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button mat-flat-button color="warn" [disabled]="store.loading()" (click)="onSubmit()">
+    Salvar Alterações
+  </button>
+</mat-dialog-actions>

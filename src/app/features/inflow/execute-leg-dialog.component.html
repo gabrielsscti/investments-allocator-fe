@@ -1,0 +1,72 @@
+<h2 mat-dialog-title>Confirmar Execução de Aporte</h2>
+
+<mat-dialog-content>
+  @if (errorMessage(); as err) {
+    <div class="dialog-error" role="alert">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ err }}</span>
+    </div>
+  }
+
+  <div class="leg-summary">
+    <div class="instrument-title">
+      <span class="ticker">{{ data.leg.instrument.ticker }}</span>
+      <span class="name">{{ data.leg.instrument.name }}</span>
+    </div>
+    <div class="proposed-info">
+      <span>Proposta da Estratégia: {{ data.leg.proposed_gross_minor_units | brlCurrency }}</span>
+    </div>
+  </div>
+
+  <form [formGroup]="form" class="dialog-form" (ngSubmit)="onSubmit()">
+    @if (!isBalanceTracked) {
+      <div class="row-2">
+        <mat-form-field appearance="outline">
+          <mat-label>Quantidade Efetivamente Comprada</mat-label>
+          <input matInput formControlName="qty" placeholder="Ex: 10" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Preço Unitário da Nota</mat-label>
+          <input matInput brlCurrencyMask formControlName="price_minor_units" />
+        </mat-form-field>
+      </div>
+    } @else {
+      <div class="row-2">
+        <mat-form-field appearance="outline">
+          <mat-label>Valor Efetivo do Depósito / Aporte</mat-label>
+          <input matInput brlCurrencyMask formControlName="deposit_minor_units" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Saldo Total Após Aporte</mat-label>
+          <input matInput brlCurrencyMask formControlName="balance_after_minor_units" />
+          <mat-hint>Preenchido automaticamente com Saldo Atual + Aporte</mat-hint>
+        </mat-form-field>
+      </div>
+    }
+
+    <mat-form-field appearance="outline">
+      <mat-label>Taxas e Custos Operacionais</mat-label>
+      <input matInput brlCurrencyMask formControlName="fees_minor_units" />
+      <mat-hint>Padrão: R$ 0,00</mat-hint>
+    </mat-form-field>
+
+    <div class="total-preview">
+      <span class="preview-label">Valor Total Efetivo:</span>
+      <span class="preview-val">{{ calculatedGrossMinorUnits | brlCurrency }}</span>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button
+    mat-flat-button
+    color="primary"
+    [disabled]="form.invalid || store.loading()"
+    (click)="onSubmit()"
+  >
+    Confirmar Execução
+  </button>
+</mat-dialog-actions>

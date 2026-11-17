@@ -1,0 +1,157 @@
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .brand-icon {
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+    }
+
+    .app-title {
+      font-weight: 600;
+      font-size: 1.15rem;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 8px;
+    margin-left: 16px;
+
+    a {
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+
+      &.active-nav {
+        background-color: rgba(255, 255, 255, 0.18);
+        font-weight: 600;
+      }
+    }
+  }
+
+  .spacer {
+    flex: 1 1 auto;
+  }
+
+  .net-worth-badge {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 6px 14px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+
+    .badge-label {
+      font-size: 0.8rem;
+      opacity: 0.9;
+    }
+
+    .badge-value {
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+  }
+}
+
+.global-loader {
+  position: sticky;
+  top: 64px;
+  z-index: 999;
+}
+
+.error-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background-color: #fee2e2;
+  color: #991b1b;
+  border-bottom: 1px solid #f87171;
+
+  .error-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+
+  .error-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+.content-container {
+  flex: 1;
+  padding: 20px;
+  max-width: 1280px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+
+  @media (max-width: 599.98px) {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 599.98px) {
+  .main-toolbar {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 8px 12px;
+
+    .brand {
+      .app-title {
+        font-size: 1rem;
+      }
+    }
+
+    .nav-links {
+      margin-left: 0;
+      width: 100%;
+      order: 3;
+      justify-content: space-around;
+      padding-top: 6px;
+    }
+
+    .net-worth-badge {
+      padding: 4px 10px;
+      .badge-value {
+        font-size: 0.9rem;
+      }
+    }
+  }
+
+  .error-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+
+    .error-actions {
+      align-self: flex-end;
+    }
+  }
+}

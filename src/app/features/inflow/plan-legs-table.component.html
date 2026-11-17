@@ -1,0 +1,97 @@
+<div class="legs-table-wrapper mat-elevation-z1">
+  <table mat-table [dataSource]="plan().legs" class="dense-table">
+    <ng-container matColumnDef="sequence">
+      <th mat-header-cell *matHeaderCellDef>Ordem</th>
+      <td mat-cell *matCellDef="let leg">
+        <span class="sequence-badge">#{{ leg.sequence }}</span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="instrument">
+      <th mat-header-cell *matHeaderCellDef>Ativo</th>
+      <td mat-cell *matCellDef="let leg">
+        <div class="instrument-cell">
+          <strong>{{ leg.instrument.ticker }}</strong>
+          <span class="name">{{ leg.instrument.name }}</span>
+        </div>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="proposed">
+      <th mat-header-cell *matHeaderCellDef>Proposta da Estratégia</th>
+      <td mat-cell *matCellDef="let leg">
+        @if (leg.proposed_qty && leg.proposed_price_minor_units_per_unit) {
+          <span>
+            {{ leg.proposed_qty }} cotas &times;
+            {{ leg.proposed_price_minor_units_per_unit | brlCurrency }}
+          </span>
+        } @else {
+          <span>Aporte em Saldo</span>
+        }
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="gross">
+      <th mat-header-cell *matHeaderCellDef>Valor Proposto</th>
+      <td mat-cell *matCellDef="let leg" class="gross-cell">
+        <strong>{{ leg.proposed_gross_minor_units | brlCurrency }}</strong>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Status</th>
+      <td mat-cell *matCellDef="let leg">
+        @switch (leg.status) {
+          @case ('EXECUTED') {
+            <span class="badge executed">Executado</span>
+          }
+          @case ('CANCELLED') {
+            <span class="badge cancelled">Ignorado</span>
+          }
+          @default {
+            <span class="badge pending">Pendente</span>
+          }
+        }
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Ações</th>
+      <td mat-cell *matCellDef="let leg">
+        <div class="actions-cell">
+          @if (leg.status === 'PENDING') {
+            <button
+              mat-flat-button
+              color="primary"
+              class="exec-btn"
+              (click)="openExecuteDialog(leg)"
+              [disabled]="store.loading()"
+            >
+              <mat-icon>check_circle</mat-icon>
+              Executar Aporte
+            </button>
+            <button
+              mat-button
+              color="warn"
+              (click)="cancelLeg(leg)"
+              [disabled]="store.loading()"
+              title="Ignorar esta recomendação"
+            >
+              Ignorar
+            </button>
+          } @else if (leg.status === 'EXECUTED') {
+            <span class="executed-indicator">
+              <mat-icon>done_all</mat-icon>
+              Registrado na Carteira
+            </span>
+          } @else {
+            <span class="cancelled-indicator">Ignorado</span>
+          }
+        </div>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let leg; columns: displayedColumns" [class.executed-row]="leg.status === 'EXECUTED'"></tr>
+  </table>
+</div>

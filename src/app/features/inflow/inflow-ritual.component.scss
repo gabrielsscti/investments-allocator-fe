@@ -1,0 +1,143 @@
+.inflow-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.header-section {
+  .page-title {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 700;
+  }
+
+  .page-subtitle {
+    margin: 4px 0 0 0;
+    font-size: 0.95rem;
+    color: var(--mat-sys-on-surface-variant, #666);
+  }
+}
+
+.savings-card {
+  border-radius: 8px;
+
+  .inflow-form {
+    padding-top: 12px;
+
+    .form-row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+
+      .amount-field {
+        flex: 1 1 300px;
+      }
+
+      .note-field {
+        flex: 1 1 300px;
+      }
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 8px;
+
+      .calc-btn {
+        height: 48px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        padding: 0 24px;
+      }
+    }
+  }
+}
+
+.plan-section {
+  .plan-summary-card {
+    border-radius: 8px;
+
+    .plan-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      flex-wrap: wrap;
+      gap: 12px;
+
+      .plan-status-tags {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .status-badge {
+          padding: 4px 12px;
+          border-radius: 16px;
+          font-weight: 600;
+          font-size: 0.85rem;
+          background-color: #dbeafe;
+          color: #1e40af;
+
+          &.executed {
+            background-color: #dcfce7;
+            color: #166534;
+          }
+
+          &.partially_executed {
+            background-color: #fef3c7;
+            color: #92400e;
+          }
+        }
+      }
+    }
+
+    .plan-metrics-bar {
+      display: flex;
+      gap: 32px;
+      padding: 16px;
+      margin: 16px 0;
+      background-color: #f8fafc;
+      border-radius: 6px;
+
+      .metric {
+        display: flex;
+        flex-direction: column;
+
+        .label {
+          font-size: 0.8rem;
+          color: #64748b;
+        }
+
+        .val {
+          font-size: 1.15rem;
+          font-weight: 700;
+
+          &.remainder {
+            color: #0284c7;
+          }
+        }
+      }
+    }
+
+    .legs-table-container {
+      margin-top: 12px;
+    }
+  }
+}
+
+@media (max-width: 599.98px) {
+  .savings-card {
+    .inflow-form {
+      .form-actions {
+        .calc-btn {
+          width: 100%;
+        }
+      }
+    }
+  }
+
+  .plan-metrics-bar {
+    flex-direction: column;
+    gap: 12px;
+  }
+}

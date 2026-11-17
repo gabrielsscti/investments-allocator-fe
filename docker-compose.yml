@@ -1,0 +1,17 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: investments-allocator-fe:latest
+    container_name: investments-allocator-fe
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    networks:
+      - default
+
+networks:
+  default:
+    name: investments-allocator_default
+    external: true

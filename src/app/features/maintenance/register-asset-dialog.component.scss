@@ -1,0 +1,47 @@
+.dialog-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #fee2e2;
+  color: #991b1b;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  font-size: 0.85rem;
+}
+
+.dialog-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 320px;
+  padding-top: 8px;
+
+  mat-form-field {
+    width: 100%;
+  }
+
+  .ticker-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+
+    .ticker-input {
+      flex: 1;
+    }
+
+    .suffix-btn {
+      height: 52px;
+      margin-bottom: 22px;
+    }
+  }
+
+  .row-2 {
+    display: flex;
+    gap: 12px;
+
+    mat-form-field {
+      flex: 1;
+    }
+  }
+}

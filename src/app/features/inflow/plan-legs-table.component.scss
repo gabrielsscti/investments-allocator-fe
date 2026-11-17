@@ -1,0 +1,112 @@
+.legs-table-wrapper {
+  overflow-x: auto;
+  border-radius: 8px;
+  background-color: var(--mat-sys-surface, #fff);
+
+  table {
+    width: 100%;
+
+    th {
+      font-weight: 600;
+      font-size: 0.85rem;
+      background-color: rgba(0, 0, 0, 0.03);
+    }
+
+    td {
+      font-size: 0.85rem;
+      padding: 10px 14px;
+    }
+  }
+}
+
+.sequence-badge {
+  background-color: #e2e8f0;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.instrument-cell {
+  display: flex;
+  flex-direction: column;
+
+  strong {
+    font-size: 0.95rem;
+    color: var(--mat-sys-primary, #005cbb);
+  }
+
+  .name {
+    font-size: 0.8rem;
+    color: #64748b;
+  }
+}
+
+.gross-cell {
+  font-size: 1rem;
+}
+
+.badge {
+  font-size: 0.75rem;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+
+  &.pending {
+    background-color: #dbeafe;
+    color: #1e40af;
+  }
+
+  &.executed {
+    background-color: #dcfce7;
+    color: #166534;
+  }
+
+  &.cancelled {
+    background-color: #f1f5f9;
+    color: #64748b;
+  }
+}
+
+.actions-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .exec-btn {
+    font-weight: 600;
+  }
+
+  .executed-indicator {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #166534;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  .cancelled-indicator {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    font-style: italic;
+  }
+}
+
+.executed-row {
+  opacity: 0.85;
+  background-color: rgba(220, 252, 231, 0.2);
+}
+
+@media (max-width: 599.98px) {
+  .actions-cell {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
