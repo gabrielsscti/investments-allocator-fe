@@ -20,13 +20,12 @@
     <div class="macro-cards-grid">
       @for (macro of summary.macros; track macro.name) {
         <mat-card class="macro-card">
-          <mat-card-header>
-            <mat-card-title class="macro-title">
-              <span>{{ macro.name }}</span>
-              <span class="macro-target">Meta: {{ macro.target_bps | bpsPercent }}</span>
-            </mat-card-title>
-          </mat-card-header>
           <mat-card-content>
+            <div class="macro-card-header">
+              <h3 class="macro-name" [title]="macro.name">{{ macro.name }}</h3>
+              <span class="macro-target-badge" title="Alocação alvo">{{ macro.target_bps | bpsPercent }}</span>
+            </div>
+
             <div class="macro-metrics">
               <div class="metric">
                 <span class="label">Atual:</span>
@@ -36,11 +35,19 @@
                 <span class="label">Alvo:</span>
                 <span class="val">{{ macro.target_minor_units | brlCurrency }}</span>
               </div>
-              <div class="metric delta" [class.negative]="macro.delta_minor_units < 0">
-                <span class="label">Déficit:</span>
-                <span class="val">{{ macro.delta_minor_units | brlCurrency }}</span>
-              </div>
+              @if (macro.delta_minor_units > 0) {
+                <div class="metric">
+                  <span class="label">Déficit:</span>
+                  <span class="val">{{ macro.delta_minor_units | brlCurrency }}</span>
+                </div>
+              } @else {
+                <div class="metric">
+                  <span class="label">Status:</span>
+                  <span class="val status-met">Em meta</span>
+                </div>
+              }
             </div>
+
             <mat-progress-bar mode="determinate" [value]="getMacroProgress(macro)"></mat-progress-bar>
           </mat-card-content>
         </mat-card>

@@ -1,3 +1,12 @@
+const fs = require('fs');
+
+if (!process.env.CHROME_BIN) {
+  const fallbackPath = '/tmp/.cache/puppeteer/chrome/linux-157.0.8103.50/chrome-linux64/chrome';
+  if (fs.existsSync(fallbackPath)) {
+    process.env.CHROME_BIN = fallbackPath;
+  }
+}
+
 module.exports = function (config) {
   config.set({
     basePath: '',
