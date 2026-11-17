@@ -145,6 +145,43 @@ describe('MaintenanceComponent', () => {
     expect(storeMock.deleteInstrument).toHaveBeenCalledWith(2);
   });
 
+  it('should render macro cards with target badge and no Meta prefix', () => {
+    fixture.detectChanges();
+    const badge = fixture.nativeElement.querySelector('.macro-target-badge');
+    expect(badge).toBeTruthy();
+    expect(badge.textContent.trim()).toBe('50,00%');
+    expect(badge.textContent).not.toContain('Meta:');
+  });
+
+  it('should show "Em meta" when delta is zero or negative and omit deficit', () => {
+    fixture.detectChanges();
+    const statusVal = fixture.nativeElement.querySelector('.macro-metrics .status-met');
+    expect(statusVal).toBeTruthy();
+    expect(statusVal.textContent.trim()).toBe('Em meta');
+    expect(fixture.nativeElement.querySelector('.macro-metrics').textContent).not.toContain('Déficit:');
+  });
+
+  it('should show "Déficit" when delta is positive', () => {
+    storeMock.summary.set({
+      total_minor_units: 5000000,
+      macros: [
+        {
+          name: 'Ações BR',
+          target_bps: 5000,
+          current_minor_units: 1500000,
+          target_minor_units: 2500000,
+          delta_minor_units: 1000000,
+          instruments: []
+        }
+      ]
+    });
+    fixture.detectChanges();
+
+    const metricsText = fixture.nativeElement.querySelector('.macro-metrics').textContent;
+    expect(metricsText).toContain('Déficit:');
+    expect(metricsText).toContain('10.000,00');
+  });
+
   it('should open register dialog on button click', () => {
     component.openRegisterDialog();
     expect(component['dialog'].open).toHaveBeenCalled();
