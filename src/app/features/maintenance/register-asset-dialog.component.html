@@ -1,0 +1,87 @@
+<h2 mat-dialog-title>Cadastrar Novo Ativo</h2>
+
+<mat-dialog-content>
+  @if (errorMessage(); as err) {
+    <div class="dialog-error" role="alert">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ err }}</span>
+    </div>
+  }
+
+  <form [formGroup]="form" class="dialog-form" (ngSubmit)="onSubmit()">
+    <mat-form-field appearance="outline">
+      <mat-label>Classe Macro</mat-label>
+      <mat-select formControlName="macro_name">
+        @for (macro of macros; track macro) {
+          <mat-option [value]="macro">{{ macro }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Nome do Ativo / Razão Social</mat-label>
+      <input matInput formControlName="name" placeholder="Ex: Itaú Unibanco PN ou Tesouro IPCA+ 2035" />
+    </mat-form-field>
+
+    @if (!isBalanceTracked) {
+      <div class="ticker-row">
+        <mat-form-field appearance="outline" class="ticker-input">
+          <mat-label>Ticker / Código de Negociação</mat-label>
+          <input matInput formControlName="ticker" placeholder="Ex: ITUB4 ou ITUB4.SA" />
+        </mat-form-field>
+        <button
+          type="button"
+          mat-stroked-button
+          class="suffix-btn"
+          (click)="applySaSuffix()"
+          title="Adiciona .SA para cotação na B3"
+        >
+          + .SA
+        </button>
+      </div>
+    } @else {
+      <mat-form-field appearance="outline">
+        <mat-label>Código Identificador (Opcional)</mat-label>
+        <input matInput formControlName="ticker" placeholder="Deixe em branco para gerar a partir do nome" />
+        <mat-hint>Para títulos e renda fixa, um identificador único é gerado automaticamente</mat-hint>
+      </mat-form-field>
+    }
+
+    <div class="row-2">
+      <mat-form-field appearance="outline">
+        <mat-label>Tipo de Ativo</mat-label>
+        <mat-select formControlName="asset_kind">
+          <mat-option value="PRICE_QUOTED">Cotado em Bolsa (Ações/FIIs)</mat-option>
+          <mat-option value="BALANCE_TRACKED">Renda Fixa / Saldo Direto</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Nota de Convicção (0 a 10)</mat-label>
+        <input matInput type="number" formControlName="score" min="0" max="10" />
+      </mat-form-field>
+    </div>
+
+    <div class="row-2">
+      <mat-form-field appearance="outline">
+        <mat-label>Regra de Lote</mat-label>
+        <mat-select formControlName="lot_rules">
+          <mat-option value="WHOLE_ONLY">Apenas Inteiro</mat-option>
+          <mat-option value="FRACTIONAL">Fracionário Permitido</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Aporte Mínimo (Centavos)</mat-label>
+        <input matInput type="number" formControlName="min_investment_minor_units" min="0" />
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button mat-flat-button color="primary" [disabled]="form.invalid || store.loading()" (click)="onSubmit()">
+    Salvar Ativo
+  </button>
+</mat-dialog-actions>

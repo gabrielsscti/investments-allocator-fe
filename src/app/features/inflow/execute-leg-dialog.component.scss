@@ -1,0 +1,78 @@
+.dialog-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #fee2e2;
+  color: #991b1b;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  font-size: 0.85rem;
+}
+
+.leg-summary {
+  background-color: rgba(0, 92, 187, 0.06);
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+
+  .instrument-title {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+
+    .ticker {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--mat-sys-primary, #005cbb);
+    }
+
+    .name {
+      font-size: 0.9rem;
+      color: var(--mat-sys-on-surface-variant, #666);
+    }
+  }
+
+  .proposed-info {
+    margin-top: 4px;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+}
+
+.dialog-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 320px;
+
+  .row-2 {
+    display: flex;
+    gap: 12px;
+
+    mat-form-field {
+      flex: 1;
+    }
+  }
+
+  .total-preview {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background-color: #f1f5f9;
+    border-radius: 6px;
+    margin-top: 4px;
+
+    .preview-label {
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    .preview-val {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #0f172a;
+    }
+  }
+}

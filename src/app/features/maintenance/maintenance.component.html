@@ -1,0 +1,257 @@
+<div class="maintenance-container">
+  <div class="header-section">
+    <div>
+      <h1 class="page-title">Carteira de Investimentos</h1>
+      <p class="page-subtitle">Ajuste de notas de convicção, posições e cadastro de novos ativos</p>
+    </div>
+    <div class="header-actions">
+      <button mat-stroked-button (click)="store.loadSummary()">
+        <mat-icon>refresh</mat-icon>
+        Atualizar
+      </button>
+      <button mat-flat-button color="primary" (click)="openRegisterDialog()">
+        <mat-icon>add</mat-icon>
+        Cadastrar Ativo
+      </button>
+    </div>
+  </div>
+
+  @if (store.summary(); as summary) {
+    <div class="macro-cards-grid">
+      @for (macro of summary.macros; track macro.name) {
+        <mat-card class="macro-card">
+          <mat-card-header>
+            <mat-card-title class="macro-title">
+              <span>{{ macro.name }}</span>
+              <span class="macro-target">Meta: {{ macro.target_bps | bpsPercent }}</span>
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="macro-metrics">
+              <div class="metric">
+                <span class="label">Atual:</span>
+                <span class="val">{{ macro.current_minor_units | brlCurrency }}</span>
+              </div>
+              <div class="metric">
+                <span class="label">Alvo:</span>
+                <span class="val">{{ macro.target_minor_units | brlCurrency }}</span>
+              </div>
+              <div class="metric delta" [class.negative]="macro.delta_minor_units < 0">
+                <span class="label">Déficit:</span>
+                <span class="val">{{ macro.delta_minor_units | brlCurrency }}</span>
+              </div>
+            </div>
+            <mat-progress-bar mode="determinate" [value]="getMacroProgress(macro)"></mat-progress-bar>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+  }
+
+  @if (!isMobile()) {
+    <div class="table-card mat-elevation-z2">
+      <table mat-table [dataSource]="getFlattenedInstruments()" class="dense-table">
+        <ng-container matColumnDef="macro">
+          <th mat-header-cell *matHeaderCellDef>Classe</th>
+          <td mat-cell *matCellDef="let row">
+            <span class="macro-chip">{{ row.macro_name }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="ticker">
+          <th mat-header-cell *matHeaderCellDef>Ticker</th>
+          <td mat-cell *matCellDef="let row">
+            <div class="ticker-cell">
+              <strong>{{ row.instrument.ticker }}</strong>
+              @if (row.quote_stale) {
+                <span class="badge warn" title="Cotação não atualizada recentemente">Cotação Stale</span>
+              }
+              @if (row.instrument.quarantined) {
+                <span class="badge quarantine" title="Ativo em quarentena">Quarentena</span>
+              }
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Ativo</th>
+          <td mat-cell *matCellDef="let row" class="name-cell">{{ row.instrument.name }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="asset_kind">
+          <th mat-header-cell *matHeaderCellDef>Tipo</th>
+          <td mat-cell *matCellDef="let row">
+            <span class="kind-label">
+              {{ row.instrument.asset_kind === 'PRICE_QUOTED' ? 'Cotado' : 'Saldo' }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="score">
+          <th mat-header-cell *matHeaderCellDef>Nota (0-10)</th>
+          <td mat-cell *matCellDef="let row">
+            <input
+              type="number"
+              class="inline-input score-input"
+              min="0"
+              max="10"
+              [value]="row.instrument.score"
+              (change)="onScoreChange(row.instrument.id, $event)"
+              title="Ajuste a nota de convicção de 0 a 10"
+            />
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="holdings">
+          <th mat-header-cell *matHeaderCellDef>Posição Atual</th>
+          <td mat-cell *matCellDef="let row">
+            @if (row.instrument.asset_kind === 'PRICE_QUOTED') {
+              <div class="holding-cell">
+                <input
+                  type="text"
+                  class="inline-input"
+                  [value]="row.instrument.holding_qty || '0'"
+                  (change)="onHoldingQtyChange(row.instrument.id, $event)"
+                  title="Quantidade de cotas/ações"
+                />
+                <span class="unit">cotas</span>
+              </div>
+            } @else {
+              <div class="holding-cell">
+                <input
+                  type="number"
+                  step="0.01"
+                  class="inline-input"
+                  [value]="((row.instrument.holding_balance_minor_units || 0) / 100).toFixed(2)"
+                  (change)="onHoldingBalanceChange(row.instrument.id, $event)"
+                  title="Saldo em Reais"
+                />
+                <span class="unit">R$</span>
+              </div>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="valuation">
+          <th mat-header-cell *matHeaderCellDef>Valor Atual</th>
+          <td mat-cell *matCellDef="let row" class="num-cell">
+            {{ row.current_value_minor_units | brlCurrency }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="delta">
+          <th mat-header-cell *matHeaderCellDef>Preço Cota</th>
+          <td mat-cell *matCellDef="let row" class="num-cell">
+            @if (row.instrument.asset_kind === 'PRICE_QUOTED') {
+              {{ row.price_per_unit_minor_units | brlCurrency }}
+            } @else {
+              -
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Ações</th>
+          <td mat-cell *matCellDef="let row">
+            <div class="action-buttons">
+              <button
+                mat-icon-button
+                (click)="openQuarantineDialog(row)"
+                [color]="row.instrument.quarantined ? 'warn' : ''"
+                title="Configurar Quarentena"
+              >
+                <mat-icon>{{ row.instrument.quarantined ? 'lock' : 'lock_open' }}</mat-icon>
+              </button>
+
+              @if (isUnheld(row)) {
+                <button
+                  mat-icon-button
+                  color="warn"
+                  (click)="deleteInstrument(row)"
+                  title="Excluir ativo sem histórico"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              }
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </div>
+  } @else {
+    <div class="mobile-cards-list">
+      @for (row of getFlattenedInstruments(); track row.instrument.id) {
+        <mat-card class="mobile-asset-card">
+          <mat-card-header>
+            <mat-card-title class="mobile-title-row">
+              <span class="ticker">{{ row.instrument.ticker }}</span>
+              <span class="val">{{ row.current_value_minor_units | brlCurrency }}</span>
+            </mat-card-title>
+            <mat-card-subtitle>{{ row.instrument.name }} ({{ row.macro_name }})</mat-card-subtitle>
+          </mat-card-header>
+
+          <mat-card-content class="mobile-content">
+            <div class="mobile-badges">
+              @if (row.quote_stale) {
+                <span class="badge warn">Cotação Stale</span>
+              }
+              @if (row.instrument.quarantined) {
+                <span class="badge quarantine">Quarentena</span>
+              }
+            </div>
+
+            <div class="mobile-form-row">
+              <div class="input-group">
+                <label>Nota Convicção (0-10):</label>
+                <input
+                  type="number"
+                  class="inline-input score-input"
+                  min="0"
+                  max="10"
+                  [value]="row.instrument.score"
+                  (change)="onScoreChange(row.instrument.id, $event)"
+                />
+              </div>
+
+              <div class="input-group">
+                <label>Posição ({{ row.instrument.asset_kind === 'PRICE_QUOTED' ? 'Cotas' : 'R$' }}):</label>
+                @if (row.instrument.asset_kind === 'PRICE_QUOTED') {
+                  <input
+                    type="text"
+                    class="inline-input"
+                    [value]="row.instrument.holding_qty || '0'"
+                    (change)="onHoldingQtyChange(row.instrument.id, $event)"
+                  />
+                } @else {
+                  <input
+                    type="number"
+                    step="0.01"
+                    class="inline-input"
+                    [value]="((row.instrument.holding_balance_minor_units || 0) / 100).toFixed(2)"
+                    (change)="onHoldingBalanceChange(row.instrument.id, $event)"
+                  />
+                }
+              </div>
+            </div>
+          </mat-card-content>
+
+          <mat-card-actions align="end">
+            <button mat-button (click)="openQuarantineDialog(row)">
+              <mat-icon>{{ row.instrument.quarantined ? 'lock' : 'lock_open' }}</mat-icon>
+              Quarentena
+            </button>
+            @if (isUnheld(row)) {
+              <button mat-button color="warn" (click)="deleteInstrument(row)">
+                <mat-icon>delete</mat-icon>
+                Excluir
+              </button>
+            }
+          </mat-card-actions>
+        </mat-card>
+      }
+    </div>
+  }
+</div>

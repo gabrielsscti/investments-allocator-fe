@@ -1,0 +1,21 @@
+.dialog-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 320px;
+  padding-top: 8px;
+
+  .asset-subtitle {
+    margin: 0;
+    color: var(--mat-sys-on-surface-variant, #666);
+    font-size: 0.95rem;
+  }
+
+  .toggle-container {
+    padding: 8px 0;
+  }
+
+  .note-field {
+    width: 100%;
+  }
+}
